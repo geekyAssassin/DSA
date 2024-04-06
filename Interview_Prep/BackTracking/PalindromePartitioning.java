@@ -4,25 +4,45 @@ import java.util.*;
 
 class PalindromePartitioning {
     List<List<String>> result = new ArrayList<>();
+
     public void solution(String input) {
-        helper(result,new ArrayList<>(), input, 0);
+        helper(result, new ArrayList<>(), input);
     }
 
-    public void helper(List<List<String>> result, List<String> tmplist, String input, int start) {
-        if(!tmplist.isEmpty()) {
-            
+    private void helper(List<List<String>> result, List<String> tmplist, String input) {
+        if (input == null || input.length() == 0) {
+            result.add(new ArrayList<>(tmplist));
+        }
+        for (int i = 1; i <= input.length(); i++) {
+            String temp = input.substring(0,i);
+            if(!isPalindrome(temp))
+            continue;
+            tmplist.add(temp);
+            helper(result, tmplist, input.substring(i,input.length()));
+            tmplist.remove(tmplist.size() - 1);
         }
     }
-    
+
+    private boolean isPalindrome(String temp) {
+        int start = 0;
+        int end = temp.length() - 1;
+        while (start <= end) {
+            if (temp.charAt(start)!= temp.charAt(end))
+                return false;
+            start++;
+            end--;
+        }
+        return true;
+    }
+
     private void print() {
-        for(List<String> row : result) {
+        for (List<String> row : result) {
             for (String element : row) {
                 System.out.print(element + " ");
             }
             System.out.println();
         }
     }
-
 
     public static void main(String args[]) {
 
@@ -36,7 +56,8 @@ class PalindromePartitioning {
             System.out.println("Enter the String");
             input = sc.next();
             s.solution(input);
-            System.out.println("The String after operation is"+input);
+            System.out.println("The String after operation is");
+            s.print();
             no_of_tests--;
         }
     }
