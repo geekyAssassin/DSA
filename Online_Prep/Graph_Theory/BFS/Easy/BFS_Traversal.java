@@ -1,14 +1,16 @@
+package Graph_Theory.BFS.Easy;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.StringTokenizer;
 
-public class Transformation_A_to_B {
-    static boolean flag = false;
-    static long ans = 0;
-    static PrintWriter out;
+public class BFS_Traversal {
+    static boolean[] visited;
+    static ArrayList<Integer>[] graph;
 
     static class FastReader {
         BufferedReader br;
@@ -53,43 +55,45 @@ public class Transformation_A_to_B {
     }
 
     public static void main(String[] args) {
-        out = new PrintWriter(System.out);
         FastReader sc = new FastReader();
 
-        long a, b;
-        a = sc.nextLong();
-        b = sc.nextLong();
-        int[] result = new int[10000005];
-        result[0] = (int) a;
-        dfsTraversal(a, b, 1, result);
-        if (flag == true) {
-            out.println("YES");
-            out.println(ans);
-            for (int i=0;i<ans;i++) {
-                out.print(result[i] + " ");
-            }
-            out.println();
-        } else {
-            out.println("NO");
+        int nodes = sc.nextInt();
+
+        visited = new boolean[nodes + 1];
+
+        graph = new ArrayList[nodes + 1];
+
+        for (int i = 0; i <= nodes; i++) {
+            graph[i] = new ArrayList<>();
         }
-        out.close();
+
+        for (int i = 0; i <= nodes; i++) {
+            int u = sc.nextInt();
+            int v = sc.nextInt();
+
+            graph[u].add(v);
+            graph[v].add(u);
+        }
+
+        bfsTraversal(0);
     }
 
-    private static void dfsTraversal(long a, long b, int step, int[] result) {
-        if (a == b) {
-            flag = true;
-            ans = step;
-            return;
+    private static void bfsTraversal(int start) {
+        Queue<Integer> queue = new LinkedList<>();
+
+        visited[start] = true;
+        queue.add(start);
+
+        while (!queue.isEmpty()) {
+            int current_node = queue.poll();
+            System.out.print(current_node + " ");
+
+            for(int node : graph[current_node]) {
+                if(!visited[node]) {
+                    visited[node] = true;
+                    queue.add(node);
+                }
+            }
         }
-        if (a > b)
-            return;
-        result[step] = (int) (a * 10 + 1);
-        dfsTraversal(a * 10 + 1, b, step+1, result);
-
-        if (flag == true)
-            return;
-
-        result[step] = (int) (a * 2);
-        dfsTraversal(a * 2, b, step+1, result);
     }
 }

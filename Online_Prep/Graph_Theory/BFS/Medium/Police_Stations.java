@@ -1,15 +1,21 @@
+package Graph_Theory.BFS.Medium;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.StringTokenizer;
 
-public class Transformation_A_to_B {
-    static boolean flag = false;
-    static long ans = 0;
-    static PrintWriter out;
+public class Police_Stations {
 
+    static PrintWriter out;
+    static int n,k,d;
+    static ArrayList<Integer>[] graph;
+    static boolean[] visited;
+    static Set<Integer> police_stations = new HashSet<>();
     static class FastReader {
         BufferedReader br;
         StringTokenizer st;
@@ -56,40 +62,24 @@ public class Transformation_A_to_B {
         out = new PrintWriter(System.out);
         FastReader sc = new FastReader();
 
-        long a, b;
-        a = sc.nextLong();
-        b = sc.nextLong();
-        int[] result = new int[10000005];
-        result[0] = (int) a;
-        dfsTraversal(a, b, 1, result);
-        if (flag == true) {
-            out.println("YES");
-            out.println(ans);
-            for (int i=0;i<ans;i++) {
-                out.print(result[i] + " ");
+        n = sc.nextInt();
+        k = sc.nextInt();
+        d = sc.nextInt();
+
+        while(k-- > 0) {
+            police_stations.add(sc.nextInt());
+        }
+
+        graph = new ArrayList[n+1];
+        visited = new boolean[n+1];
+        for(int i=0;i<=n;i++) {
+            graph[i] = new ArrayList<>();
+        }
+
+        for(int i=1;i<=n;i++) {
+            if(!visited[i]) {
+                out.println(i);
             }
-            out.println();
-        } else {
-            out.println("NO");
         }
-        out.close();
-    }
-
-    private static void dfsTraversal(long a, long b, int step, int[] result) {
-        if (a == b) {
-            flag = true;
-            ans = step;
-            return;
-        }
-        if (a > b)
-            return;
-        result[step] = (int) (a * 10 + 1);
-        dfsTraversal(a * 10 + 1, b, step+1, result);
-
-        if (flag == true)
-            return;
-
-        result[step] = (int) (a * 2);
-        dfsTraversal(a * 2, b, step+1, result);
     }
 }

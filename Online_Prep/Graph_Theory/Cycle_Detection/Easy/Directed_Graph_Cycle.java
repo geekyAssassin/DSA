@@ -1,14 +1,17 @@
+package Graph_Theory.Cycle_Detection.Easy;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
-public class kefa_and_park {
-    static PrintWriter out;
-    static int total = 0;
+public class Directed_Graph_Cycle {
+
+    static ArrayList<Integer>[] graph;
+    static int[] color;
+    static int[] parent;
+    static int cycle_start, cycle_end;
 
     static class FastReader {
         BufferedReader br;
@@ -54,51 +57,56 @@ public class kefa_and_park {
 
     public static void main(String[] args) {
         FastReader sc = new FastReader();
-        out = new PrintWriter(System.out);
 
         int n = sc.nextInt();
         int m = sc.nextInt();
 
-        ArrayList<Integer> graph[] = new ArrayList[n + 1];
-        for (int i = 1; i <= n; i++) {
+        graph = new ArrayList[n + 1];
+        color = new int[n + 1];
+        parent = new int[n + 1];
+
+        for (int i = 0; i <= n; i++)
+            parent[i] = -1;
+
+        for (int i = 0; i <= n; i++)
             graph[i] = new ArrayList<>();
+
+        for (int i = 1; i <= m; i++) {
+            int u = sc.nextInt();
+            int v = sc.nextInt();
+
+            graph[u].add(v);
         }
-        long[] cats = new long[n + 1];
+
         for (int i = 1; i <= n; i++) {
-            cats[i] = sc.nextLong();
+            if (color[i] == 0 && dfsTraversal(i))
+                break;
         }
 
-        for (int i = 0; i < n - 1; i++) {
-            int j = sc.nextInt();
-            int k = sc.nextInt();
+        ArrayList<Integer> result = new ArrayList<>();
+        for(int v = cycle_end; v!=cycle_start; v=parent[v])
+            result.add(v);
 
-            graph[j].add(k);
-            graph[k].add(j);
-        }
-        boolean[] visited = new boolean[n + 1];
-        dfsTraversal(visited, cats, graph, 1, m, 0);
-        out.println(total);
-        out.close();
+        // print the result
     }
 
-    private static void dfsTraversal(boolean[] visited, long[] cats, ArrayList<Integer>[] graph,
-            int start, int maxCats, int sum) {
-        if (visited[start])
-            return;
-
-        visited[start] = true;
-        if (cats[start] == 1)
-            sum++;
-        else
-            sum = 0;
-        if (sum > maxCats)
-            return;
-
-        if (start != 1 && graph[start].size() == 1)
-            total++;
-
-        for (int src : graph[start]) {
-            dfsTraversal(visited, cats, graph, src, maxCats, sum);
+    private static boolean dfsTraversal(int start) {
+        color[start] = 1;
+        for (int node : graph[start]) {
+            if (color[node] == 0) {
+                parent[node] = start;
+                if (dfsTraversal(node))
+                    return true;
+            } else if (color[node] == 1) {
+                cycle_end = node;
+                cycle_start = start;
+                return true;
+            }
         }
+
+        color[start] = 2;
+        return false;
+
     }
+
 }

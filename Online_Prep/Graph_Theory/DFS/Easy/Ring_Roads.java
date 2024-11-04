@@ -1,4 +1,5 @@
 
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -6,9 +7,10 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
-public class kefa_and_park {
+public class Ring_Roads {
+
     static PrintWriter out;
-    static int total = 0;
+    static long cost;
 
     static class FastReader {
         BufferedReader br;
@@ -52,53 +54,56 @@ public class kefa_and_park {
         }
     }
 
+    public class Pair {
+        int v;
+        int w;
+
+        public Pair(int v, int w) {
+            this.v = v;
+            this.w = w;
+        }
+    }
+
     public static void main(String[] args) {
         FastReader sc = new FastReader();
         out = new PrintWriter(System.out);
 
         int n = sc.nextInt();
-        int m = sc.nextInt();
+        long sum = 0;
+        Ring_Roads ringRoads = new Ring_Roads();
 
-        ArrayList<Integer> graph[] = new ArrayList[n + 1];
-        for (int i = 1; i <= n; i++) {
+        ArrayList<Pair>[] graph = new ArrayList[n + 1];
+        for(int i=0;i<=n;i++)
             graph[i] = new ArrayList<>();
-        }
-        long[] cats = new long[n + 1];
-        for (int i = 1; i <= n; i++) {
-            cats[i] = sc.nextLong();
+        
+        for (int i = 0; i < n; i++) {
+            int u = sc.nextInt();
+            int v = sc.nextInt();
+            int w = sc.nextInt();
+
+            graph[u].add(ringRoads.new Pair(v, 0));
+            graph[v].add(ringRoads.new Pair(u, w));
+            sum += w;
         }
 
-        for (int i = 0; i < n - 1; i++) {
-            int j = sc.nextInt();
-            int k = sc.nextInt();
-
-            graph[j].add(k);
-            graph[k].add(j);
-        }
         boolean[] visited = new boolean[n + 1];
-        dfsTraversal(visited, cats, graph, 1, m, 0);
-        out.println(total);
+        dfsTraversal(graph, visited, 1, 0);
+        out.println(Math.min(cost, sum - cost));
         out.close();
     }
 
-    private static void dfsTraversal(boolean[] visited, long[] cats, ArrayList<Integer>[] graph,
-            int start, int maxCats, int sum) {
-        if (visited[start])
-            return;
-
+    private static void dfsTraversal(ArrayList<Pair>[] graph, boolean[] visited, int start, int next) {
         visited[start] = true;
-        if (cats[start] == 1)
-            sum++;
-        else
-            sum = 0;
-        if (sum > maxCats)
-            return;
 
-        if (start != 1 && graph[start].size() == 1)
-            total++;
-
-        for (int src : graph[start]) {
-            dfsTraversal(visited, cats, graph, src, maxCats, sum);
+        for (Pair p : graph[start]) {
+            int nextEle = p.v;
+            int c = p.w;
+            if (!visited[nextEle]) {
+                cost += c;
+                dfsTraversal(graph, visited, nextEle, start);
+            } else if (nextEle == 1 && next != nextEle)
+                cost += c;
         }
     }
+
 }

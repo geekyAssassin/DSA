@@ -1,4 +1,4 @@
-package Easy;
+
 import java.util.Scanner;
  
 public class Counting_rooms {
@@ -7,6 +7,18 @@ public class Counting_rooms {
     static int totalRooms = 0;
  
     public static void main(String[] args) {
+        new Thread(null, new Runnable() {
+            public void run() {
+                try {
+                    solve();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }, "Main", 1 << 26).start();
+    }
+
+    private static void solve() {
         Scanner sc = new Scanner(System.in);
  
         int n = sc.nextInt();
@@ -18,8 +30,9 @@ public class Counting_rooms {
  
         // Read the map from input
         for (int i = 0; i < n; i++) {
+            String line = sc.nextLine();
             for (int j = 0; j < m; j++) {
-                map[i][j] = sc.next().charAt(0);
+                map[i][j] = line.charAt(j);
             }
         }
  
@@ -34,7 +47,6 @@ public class Counting_rooms {
         }
  
         System.out.println(totalRooms);
-        sc.close();
     }
  
     private static void dfsTraversal(char[][] map, boolean[][] visited, int x, int y, int rows, int columns) {

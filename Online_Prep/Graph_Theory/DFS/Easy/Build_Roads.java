@@ -1,4 +1,3 @@
-package Easy;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -70,8 +69,16 @@ public class Build_Roads {
             bw.close();
         }
     }
-
     public static void main(String[] args) throws IOException {
+        new Thread(null, new Runnable() {
+            public void run() {
+                solve();
+            }
+        }, "Main", 1<<29).start();
+    }
+
+    @SuppressWarnings("unchecked")
+    public static void solve() {
         int n, m;
         FastReader sc = new FastReader();
         n = sc.nextInt();
