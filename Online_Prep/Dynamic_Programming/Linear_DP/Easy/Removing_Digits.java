@@ -1,12 +1,12 @@
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.StringTokenizer;
 
-public class CoinCombinations_1 {
-    static final int MOD = 1000000007;
+public class Removing_Digits {
+
+    static PrintWriter out;
 
     static class FastReader {
         BufferedReader br;
@@ -59,31 +59,49 @@ public class CoinCombinations_1 {
     }
 
     public static void solve() {
+        out = new PrintWriter(System.out);
         FastReader sc = new FastReader();
-        PrintWriter out = new PrintWriter(System.out);
 
-        int n, target;
-        n = sc.nextInt();
-        target = sc.nextInt();
-        int[] coins = new int[n];
-        for (int i = 0; i < n; i++)
-            coins[i] = sc.nextInt();
-
-        out.println(calculateDistinctWays(coins, target));
+        long n = sc.nextLong();
+        out.println(minSteps(n));
         out.close();
+
     }
 
-    private static long calculateDistinctWays(int[] coins, int target) {
-        long[] dp = new long[target + 1];
-        dp[0] = 1;
-        for (int i = 1; i <= target; i++) {
-            for (int x : coins) {
-                if (i - x >= 0) {
-                    dp[i] = (dp[i] + dp[i - x]) % MOD;
-                }
+    static long minSteps(long n) {
+        long steps = 0;
+        while (n > 0) {
+            long maxDigit = maxDigit(n);
+            n -= maxDigit;
+            steps++;
+        }
+        return steps;
+    }
+
+    static long maxDigit(long n) {
+        long max = 0;
+        while (n > 0) {
+            long digit = n % 10;
+            if (digit > max) {
+                max = digit;
+            }
+            n /= 10;
+        }
+        return max;
+    }
+
+    static long minStepsUsingDP(long n) {
+        long[] dp = new long[(int) n+1];
+        dp[0] = 0;
+
+        for( int i=1;i<=n;i++) {
+            for(char ch: String.valueOf((i)).toCharArray()) {
+                int digit = ch - '0';
+                dp[i] = Math.min(dp[i], dp[i-digit] + 1);
             }
         }
-        return dp[target];
-    }
 
+        return dp[(int) n];
+
+    }
 }

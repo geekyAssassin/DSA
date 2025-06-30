@@ -1,11 +1,9 @@
-
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.StringTokenizer;
 
-public class Grid_paths {
+public class Number_of_LIS {
     static PrintWriter out;
 
     static class FastReader {
@@ -61,39 +59,56 @@ public class Grid_paths {
     public static void solve() {
         FastReader sc = new FastReader();
         out = new PrintWriter(System.out);
+
         int n = sc.nextInt();
-
-        int[][] arr = new int[n][n];
-        int[][] dp = new int[n][n];
+        int[] nums = new int[n];
         for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                dp[i][j] = -1;
-            }
+            nums[i] = sc.nextInt();
+        }
+
+        int[] dp = new int[n];
+        int[] count = new int[n];
+        int maxLength = 0;
+
+        out.println(getNumberOfLIS(nums, dp, count, maxLength, n));
+    }
+
+    private static int getNumberOfLIS(int[] nums, int[] dp, int[] count, int maxLength, int n) {
+        for (int i = 0; i < n; i++) {
+            dp[i] = 1;
+            count[i] = 1; // Each element is a subsequence of length 1
         }
 
         for (int i = 0; i < n; i++) {
-            String s = sc.next();
-            for (int j = 0; j < n; j++) {
-                arr[i][j] = s.charAt(j) == '.' ? 1 : 0;
+            for (int j = 0; j < i; j++) {
+                if (nums[j] < nums[i]) {
+                    if (dp[j] + 1 > dp[i]) { // Check if we found a longer subsequence
+                        dp[i] = dp[j] + 1;
+                        count[i] = count[j]; // Reset count to count of j
+                    } else if (dp[j] + 1 == dp[i]) { // If we found another subsequence of the same length
+                        count[i] += count[j]; // Add the count of j to i
+                    }
+                }
             }
         }
 
-        out.println(getNumberOfPaths(arr, n, 0, 0, dp));
-        out.close();
+        for (int i = n - 1; i >= 0; i--) {
+            if (maxLength < dp[i])
+                maxLength = dp[i];
+        }
+
+        int ways = 0;
+        for (int i = 0; i < n; i++) {
+            if (dp[i] == maxLength) {
+                ways += count[i]; // Sum counts of all LIS of maximum length
+            }
+        }
+        return ways;
     }
 
-    private static int getNumberOfPaths(int[][] arr, int n, int i, int j, int[][] dp) {
-        if (i >= n || j >= n || arr[i][j] == 0)
-            return 0;
-        if (i == n - 1 && j == n - 1)
-            return 1;
-        if (dp[i][j] != -1)
-            return dp[i][j];
-
-        int rightPaths = getNumberOfPaths(arr, n, i, j + 1, dp);
-        int downPaths = getNumberOfPaths(arr, n, i + 1, j, dp);
-
-        return dp[i][j] = (rightPaths + downPaths) % 1000000007;
-    }
-
+    // Test Cases to practice:
+    // [5,0,2,9,5,2,2,6,3,7]
+    // [6,5,6,5,5,2,5,1,9,4]
+    // [55,-53,98,14,100,-4,10,98,-99,-35,14,55,71,-67,-25,62,-80,-60,-25,-84]
+    // [-59,-40,87,95,4,19,35,81,-50,-76,49,-85,-51,-1,-14,51,59,-31,85,-86]
 }

@@ -1,4 +1,3 @@
-package Dynamic_Programming.Linear_DP.Easy;
 
 import java.io.BufferedReader;
 import java.io.IOException;

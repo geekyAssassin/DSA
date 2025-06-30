@@ -1,12 +1,11 @@
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.StringTokenizer;
 
-public class CoinCombinations_1 {
-    static final int MOD = 1000000007;
+public class Student_Happiness {
+    static PrintWriter out;
 
     static class FastReader {
         BufferedReader br;
@@ -55,35 +54,47 @@ public class CoinCombinations_1 {
             public void run() {
                 solve();
             }
-        }, "Main", 1 << 29).start();
+        }, "Main", 1 << 28).start();
     }
 
     public static void solve() {
+        out = new PrintWriter(System.out);
         FastReader sc = new FastReader();
-        PrintWriter out = new PrintWriter(System.out);
-
-        int n, target;
-        n = sc.nextInt();
-        target = sc.nextInt();
-        int[] coins = new int[n];
-        for (int i = 0; i < n; i++)
-            coins[i] = sc.nextInt();
-
-        out.println(calculateDistinctWays(coins, target));
+        int t, n, m;
+        t = sc.nextInt();
+        while (t-- > 0) {
+            n = sc.nextInt();
+            m = sc.nextInt();
+            int[][] arr = new int[m][n];
+            for (int i = 0; i < m; i++) {
+                for (int j = 0; j < n; j++) {
+                    arr[i][j] = sc.nextInt();
+                }
+            }
+            int size = 1 << n;
+            long[][] dp = new long[m + 1][size];
+            for (int i = 0; i <= m; i++) {
+                for (int j = 0; j < size; j++) {
+                    dp[i][j] = 0;
+                }
+            }
+            out.println(getMaxHappiness(arr, dp, n, m, size));
+        }
         out.close();
     }
 
-    private static long calculateDistinctWays(int[] coins, int target) {
-        long[] dp = new long[target + 1];
-        dp[0] = 1;
-        for (int i = 1; i <= target; i++) {
-            for (int x : coins) {
-                if (i - x >= 0) {
-                    dp[i] = (dp[i] + dp[i - x]) % MOD;
+    private static long getMaxHappiness(int[][] arr, long[][] dp, int n, int m, int size) {
+        for (int student = m - 1; student >= 0; student--) {
+            for (int mask = 0; mask < size; mask++) {
+                long best = dp[student + 1][mask];
+                for (int i = 0; i < n; i++) {
+                    if ((mask & (1 << i)) == 0) {
+                        best = Math.max(best, arr[student][i] + dp[student + 1][mask | (1 << i)]);
+                    }
                 }
+                dp[student][mask] = best;
             }
         }
-        return dp[target];
+        return dp[0][0];
     }
-
 }

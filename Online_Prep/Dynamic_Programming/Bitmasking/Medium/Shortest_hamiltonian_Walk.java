@@ -1,12 +1,12 @@
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.StringTokenizer;
 
-public class CoinCombinations_1 {
-    static final int MOD = 1000000007;
+public class Shortest_hamiltonian_Walk {
+    static PrintWriter out;
 
     static class FastReader {
         BufferedReader br;
@@ -59,31 +59,37 @@ public class CoinCombinations_1 {
     }
 
     public static void solve() {
+        out = new PrintWriter(System.out);
         FastReader sc = new FastReader();
-        PrintWriter out = new PrintWriter(System.out);
 
-        int n, target;
-        n = sc.nextInt();
-        target = sc.nextInt();
-        int[] coins = new int[n];
-        for (int i = 0; i < n; i++)
-            coins[i] = sc.nextInt();
+        int n = sc.nextInt();
+        int m = sc.nextInt();
 
-        out.println(calculateDistinctWays(coins, target));
+        ArrayList<Integer>[] graph = new ArrayList[n];
+        for (int i = 0; i < n; i++) {
+            graph[i] = new ArrayList<>();
+        }
+
+        for (int i = 0; i < m; i++) {
+            int u = sc.nextInt() - 1;
+            int v = sc.nextInt() - 1;
+            graph[u].add(v);
+            graph[v].add(u);
+        }
+
+        int[][] dp = new int[n][n];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                dp[i][j] = -1;
+            }
+        }
+
+        out.println(calculateShortestHamiltonianWalk(0, 1, graph, dp, n));
+        out.flush();
         out.close();
     }
 
-    private static long calculateDistinctWays(int[] coins, int target) {
-        long[] dp = new long[target + 1];
-        dp[0] = 1;
-        for (int i = 1; i <= target; i++) {
-            for (int x : coins) {
-                if (i - x >= 0) {
-                    dp[i] = (dp[i] + dp[i - x]) % MOD;
-                }
-            }
-        }
-        return dp[target];
+    private static int calculateShortestHamiltonianWalk(int currentNode, int mask, ArrayList<Integer>[] graph, int[][] dp, int n) {
+        if(mask == )
     }
-
 }

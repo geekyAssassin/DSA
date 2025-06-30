@@ -1,3 +1,4 @@
+package Union_Find.Easy;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -5,8 +6,49 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.StringTokenizer;
 
-public class CoinCombinations_1 {
-    static final int MOD = 1000000007;
+public class DisjointSet {
+
+    public class UnionFind {
+        private int[] parent;
+        private int[] rank;
+
+        public UnionFind(int n) {
+            parent = new int[n];
+            rank = new int[n];
+            for (int i = 0; i < n; i++) {
+                parent[i] = i;
+            }
+        }
+
+        public void make_set(int a) {
+            parent[a] = a;
+        }
+
+        public int find_set(int a) {
+            if (parent[a] != a) {
+                a = find_set(parent[a]);
+            }
+            return a;
+        }
+
+        public void union_set(int a, int b) {
+            a = find_set(a);
+            b = find_set(b);
+            if (a != b) {
+                if (rank[a] < rank[b]) {
+                    int temp = a;
+                    a = b;
+                    b = temp;
+                }
+                parent[b] = a;
+                if (rank[a] == rank[b]) {
+                    rank[a]++;
+                }
+            }
+        }
+    }
+
+    static PrintWriter out;
 
     static class FastReader {
         BufferedReader br;
@@ -59,31 +101,6 @@ public class CoinCombinations_1 {
     }
 
     public static void solve() {
-        FastReader sc = new FastReader();
-        PrintWriter out = new PrintWriter(System.out);
-
-        int n, target;
-        n = sc.nextInt();
-        target = sc.nextInt();
-        int[] coins = new int[n];
-        for (int i = 0; i < n; i++)
-            coins[i] = sc.nextInt();
-
-        out.println(calculateDistinctWays(coins, target));
-        out.close();
-    }
-
-    private static long calculateDistinctWays(int[] coins, int target) {
-        long[] dp = new long[target + 1];
-        dp[0] = 1;
-        for (int i = 1; i <= target; i++) {
-            for (int x : coins) {
-                if (i - x >= 0) {
-                    dp[i] = (dp[i] + dp[i - x]) % MOD;
-                }
-            }
-        }
-        return dp[target];
     }
 
 }

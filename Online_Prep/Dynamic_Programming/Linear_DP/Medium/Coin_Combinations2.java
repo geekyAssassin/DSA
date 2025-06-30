@@ -1,12 +1,15 @@
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.StringTokenizer;
 
-public class CoinCombinations_1 {
-    static final int MOD = 1000000007;
+public class Coin_Combinations2 {
+    static PrintWriter out;
+    static int mod = 1000000007;
+    static int[] dp;
+    static int[] coins;
+    static int n, m;
 
     static class FastReader {
         BufferedReader br;
@@ -60,30 +63,22 @@ public class CoinCombinations_1 {
 
     public static void solve() {
         FastReader sc = new FastReader();
-        PrintWriter out = new PrintWriter(System.out);
-
-        int n, target;
+        out = new PrintWriter(System.out);
         n = sc.nextInt();
-        target = sc.nextInt();
-        int[] coins = new int[n];
-        for (int i = 0; i < n; i++)
+        m = sc.nextInt();
+        coins = new int[n];
+        dp = new int[m + 1];
+        for (int i = 0; i < n; i++) {
             coins[i] = sc.nextInt();
-
-        out.println(calculateDistinctWays(coins, target));
-        out.close();
-    }
-
-    private static long calculateDistinctWays(int[] coins, int target) {
-        long[] dp = new long[target + 1];
+        }
         dp[0] = 1;
-        for (int i = 1; i <= target; i++) {
-            for (int x : coins) {
-                if (i - x >= 0) {
-                    dp[i] = (dp[i] + dp[i - x]) % MOD;
-                }
+        for (int i = 0; i < n; i++) {
+            for (int j = coins[i]; j <= m; j++) {
+                dp[j] = (dp[j] + dp[j - coins[i]]) % mod;
             }
         }
-        return dp[target];
+        out.println(dp[m]);
+        out.flush();
+        out.close();
     }
-
 }
