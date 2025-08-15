@@ -4,35 +4,63 @@ import java.util.*;
 
 public class KMP {
 
-    private int[] generatePrefix(String pattern) {
-        int m = pattern.length();
-        int[] result = new int[m];
-        result[0]=0;
-        for(int i=1;i<m;i++) {
-            int j = result[i-1];
-            while(j>0 && pattern.charAt(i)!=pattern.charAt(j))
-                j = result[j-1];
-            if(pattern.charAt(i) == pattern.charAt(j))
+    private void constructLPS(String pattern, int[] lps) {
+        int j = 0;
+        int i = 1;
+        lps[0] = 0;
+        while (i < pattern.length()) {
+            if (pattern.charAt(j) == pattern.charAt(i)) {
                 j++;
-            result[i]=j;            
+                lps[i] = j;
+                i++;
+            } else {
+                if (j != 0) {
+                    j = lps[j - 1];
+                } else {
+                    i++;
+                    lps[i] = 0;
+                }
+            }
         }
-        return result;
     }
+
+    private void KMPSearch(String pattern, String text) {
+        int m = pattern.length();
+        int[] lps = new int[m];
+        constructLPS(pattern, lps);
+
+        int i = 0, j = 0;
+        while (i < text.length()) {
+            if (pattern.charAt(j) == text.charAt(i)) {
+                i++;
+                j++;
+
+                if (j == m) {
+                    System.out.println("Pattern found at index " + (i - j));
+                    j = lps[j - 1];
+                }
+            } else {
+                if (j != 0) {
+                    j = lps[j - 1];
+                } else {
+                    i++;
+                }
+            }
+        }
+    }
+
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         System.out.println("Enter the no of tests");
         int tests = sc.nextInt();
         KMP k = new KMP();
-        while(tests--!=0) {
+        while (tests-- != 0) {
             System.out.println("Enter Pattern and text");
             String pattern = sc.next();
-            // String text = sc.next();
-            int[] prefix = k.generatePrefix(pattern);
-            for (Integer integer : prefix) {
-                System.out.print(integer);                
-            }
+            String text = sc.next();
+            k.KMPSearch(pattern, text);
             System.out.println();
         }
     }
-    
+
 }
