@@ -4,12 +4,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.util.Arrays;
 import java.util.StringTokenizer;
 
-public class Matrix_Multiplication {
+public class Array_Shrinking {
     static PrintWriter out;
-    static int[][] dp;
 
     static class FastReader {
         BufferedReader br;
@@ -62,58 +60,43 @@ public class Matrix_Multiplication {
     }
 
     public static void solve() {
-        out = new PrintWriter(System.out);
         FastReader sc = new FastReader();
+        out = new PrintWriter(System.out);
 
         int n = sc.nextInt();
         int[] arr = new int[n];
         for (int i = 0; i < n; i++) {
             arr[i] = sc.nextInt();
         }
-        dp = new int[n][n];
-        for (int[] a : dp) {
-            Arrays.fill(a, Integer.MAX_VALUE);
-        }
 
-        out.println(matrixMutliplicationRec(arr, 0, n - 1));
+        out.println(getMaxLength(arr, n));
         out.close();
     }
 
-    private static int matrixMutliplicationRec(int[] arr, int i, int j) {
-        if (i + 1 == j)
-            return 0;
-
-        if (dp[i][j] != -1)
-            return dp[i][j];
-        int res = Integer.MAX_VALUE;
-        /*
-         * Place the first bracket at every possible position and find the minimum cost
-         * of the multiplication. The cost of multiplying two matrices is equal to the
-         * product of the number of rows in the first matrix, the number of columns in
-         * the
-         * first matrix and the number of columns in the second matrix.
-         */
-
-        for (int k = i + 1; k < j; k++) {
-            int cost = matrixMutliplicationRec(arr, i, k) + matrixMutliplicationRec(arr, k, j)
-                    + arr[i] * arr[k] * arr[j];
-            res = Math.min(res, cost);
+    private static int getMaxLength(int[] arr, int n) {
+        int[] dp = new int[n + 1];
+        int[][] finalArray = new int[n + 1][n + 1];
+        for (int i = 0; i < n; i++) {
+            finalArray[i + 1][i + 1] = arr[i];
         }
-        return dp[i][j] = res;
-    }
-
-    private static int matrixMutliplicationDP(int[] arr, int n) {
-        for (int len = 2; len < n; len++) {
-            for (int i = 0; i < n - len; i++) {
-                int j = i + len;
-                dp[i][j] = Integer.MAX_VALUE;
-                for (int k = i + 1; k < j; k++) {
-                    int cost = arr[i] * arr[k] * arr[j];
-                    if (cost < dp[i][j])
-                        dp[i][j] = cost;
+        for (int len = 2; len <= n; len++) {
+            for (int i = 1; i + len - 1 <= n; i++) {
+                int r = i + len - 1;
+                for (int j = 0; j < r; j++) {
+                    if (finalArray[i][j] != 0 && finalArray[i][j] == finalArray[j + 1][r]) {
+                        finalArray[i][r] = finalArray[i][j] + 1;
+                    }
                 }
             }
         }
-        return dp[n - 1][n - 1];
+        for (int i = 1; i <= n; i++) {
+            dp[i] = Integer.MAX_VALUE;
+            for (int j = 0; j < i; j++) {
+                if (finalArray[j + 1][i] != 0) {
+                    dp[i] = Math.min(dp[i], dp[j] + 1);
+                }
+            }
+        }
+        return dp[n];
     }
 }

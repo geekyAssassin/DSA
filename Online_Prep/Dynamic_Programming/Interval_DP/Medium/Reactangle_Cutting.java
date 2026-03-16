@@ -7,9 +7,8 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.StringTokenizer;
 
-public class Matrix_Multiplication {
+public class Reactangle_Cutting {
     static PrintWriter out;
-    static int[][] dp;
 
     static class FastReader {
         BufferedReader br;
@@ -64,56 +63,31 @@ public class Matrix_Multiplication {
     public static void solve() {
         out = new PrintWriter(System.out);
         FastReader sc = new FastReader();
-
         int n = sc.nextInt();
-        int[] arr = new int[n];
-        for (int i = 0; i < n; i++) {
-            arr[i] = sc.nextInt();
-        }
-        dp = new int[n][n];
-        for (int[] a : dp) {
-            Arrays.fill(a, Integer.MAX_VALUE);
-        }
-
-        out.println(matrixMutliplicationRec(arr, 0, n - 1));
+        int m = sc.nextInt();
+        out.println(getMinMoves(n, m));
         out.close();
     }
 
-    private static int matrixMutliplicationRec(int[] arr, int i, int j) {
-        if (i + 1 == j)
-            return 0;
-
-        if (dp[i][j] != -1)
-            return dp[i][j];
-        int res = Integer.MAX_VALUE;
-        /*
-         * Place the first bracket at every possible position and find the minimum cost
-         * of the multiplication. The cost of multiplying two matrices is equal to the
-         * product of the number of rows in the first matrix, the number of columns in
-         * the
-         * first matrix and the number of columns in the second matrix.
-         */
-
-        for (int k = i + 1; k < j; k++) {
-            int cost = matrixMutliplicationRec(arr, i, k) + matrixMutliplicationRec(arr, k, j)
-                    + arr[i] * arr[k] * arr[j];
-            res = Math.min(res, cost);
+    private static int getMinMoves(int n, int m) {
+        int[][] dp = new int[n + 1][m + 1];
+        for (int i = 0; i <= n; i++) {
+            Arrays.fill(dp[i], Integer.MAX_VALUE);
         }
-        return dp[i][j] = res;
-    }
-
-    private static int matrixMutliplicationDP(int[] arr, int n) {
-        for (int len = 2; len < n; len++) {
-            for (int i = 0; i < n - len; i++) {
-                int j = i + len;
-                dp[i][j] = Integer.MAX_VALUE;
-                for (int k = i + 1; k < j; k++) {
-                    int cost = arr[i] * arr[k] * arr[j];
-                    if (cost < dp[i][j])
-                        dp[i][j] = cost;
+        for (int i = 0; i <= n; i++) {
+            for (int j = 0; j <= m; j++) {
+                if (i == j)
+                    dp[i][j] = 0;
+                else {
+                    for (int k = 1; k < j; k++) {
+                        dp[i][j] = Math.min(dp[i][j], dp[i][k] + dp[i][j - k] + 1);
+                    }
+                    for (int k = 1; k < i; k++) {
+                        dp[i][j] = Math.min(dp[i][j], dp[i - k][j] + dp[k][j] + 1);
+                    }
                 }
             }
         }
-        return dp[n - 1][n - 1];
+        return dp[n][m];
     }
 }
